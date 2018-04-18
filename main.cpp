@@ -37,6 +37,8 @@ public:
     }
     ~ c_numar_complex ()
     {
+        re=0;
+        im=0;
         
     }
     bool is_null()
@@ -187,10 +189,9 @@ int c_numar_complex :: operator>(const c_numar_complex & y)
 
 class c_Matrice
 {
-public:
     c_numar_complex **mat;
     int lin, col;
-    
+    public:
     c_Matrice() {};
     void init (int l,int c)
     {
@@ -218,6 +219,29 @@ public:
     c_Matrice (int l, int c)
     {
         init(l, c);
+    }
+    void freeMat()
+    {
+        if(lin==0 || col==0)
+            return;
+        int i;
+        for(i=0; i<lin; i++)
+            delete [] mat[i];
+        lin=0;
+        col=0;
+        
+    }
+    ~ c_Matrice() //destructor
+    {
+        freeMat();
+    }
+    int getLin()
+    {
+        return lin;
+    }
+    int getCol()
+    {
+        return col;
     }
     void print()
     {
@@ -611,18 +635,18 @@ int main()
                     for(i=0;i<nr;i++)
                     {
                         
-                        cout<<"Dati nr de linii pentru matricea "<<i+1;
+                        cout<<"Dati nr de linii pentru matricea "<<i+1<<" ";
                         cin>>linii;
-                        cout<<"Dati nr de coloane pentru matricea "<<i+1;
+                        cout<<"Dati nr de coloane pentru matricea "<<i+1<<" ";
                         cin>>coloane;
                         
                         matrice_vect[i].init(linii,coloane);
                         
                         if(i!=0)
                         {
-                            if(matrice_vect[i].lin!= matrice_vect[0].lin || matrice_vect[i].col!= matrice_vect[0].col)
+                            if(matrice_vect[i].getLin()!= matrice_vect[0].getLin() || matrice_vect[i].getCol() != matrice_vect[0].getCol())
                             {
-                                cout<<"Matricea introdusa nu se poate aduna (diefra numarul de linii/coloane)";
+                                cout<<"Matricea introdusa nu se poate aduna (difera numarul de linii/coloane)";
                                 break;
                             }
                         }
@@ -644,6 +668,12 @@ int main()
                     }
                     cout<<"Matricea rezultata in urma adunarilor este "<<endl;
                     matr_rez.print();
+                    
+                    for(i=0;i<nr;i++)
+                        matrice_vect[i].~c_Matrice();
+                    
+                    matr_rez.~c_Matrice();
+                    
                     break;
                     
                           }
@@ -667,9 +697,9 @@ int main()
                         
                         if(i!=0)
                         {
-                            if(matrice_vect[i].lin!= matrice_vect[0].lin || matrice_vect[i].col!= matrice_vect[0].col)
+                            if(matrice_vect[i].getLin()!= matrice_vect[0].getLin() || matrice_vect[i].getCol() != matrice_vect[0].getCol() )
                             {
-                                cout<<"Matricea introdusa nu se poate scade (diefra numarul de linii/coloane)";
+                                cout<<"Matricea introdusa nu se poate scade (difera numarul de linii/coloane)";
                                 break;
                             }
                         }
@@ -687,6 +717,11 @@ int main()
                     }
                     cout<<"Matricea rezultata in urma scaderilor este "<<endl;
                     matr_rez.print();
+                    
+                    for(i=0;i<nr;i++)
+                        matrice_vect[i].~c_Matrice();
+                    
+                    matr_rez.~c_Matrice();
                     break;
                     
                 }
@@ -709,7 +744,7 @@ int main()
                         
                         if(i!=0)
                         {
-                            if( matrice_vect[i].lin!= matrice_vect[0].col )
+                            if( matrice_vect[i].getLin() != matrice_vect[0].getCol() )
                             {
                                 cout<<"Matricea introdusa nu se poate inmulti (diefra numarul de linii/coloane)";
                                 break;
@@ -727,6 +762,11 @@ int main()
                     }
                     cout<<"Matricea rezultata in urma inmultirilor este "<<endl;
                     matr_rez.print();
+                    
+                    for(i=0;i<nr;i++)
+                        matrice_vect[i].~c_Matrice();
+                    
+                    matr_rez.~c_Matrice();
                     break;
                     
                 }
@@ -748,6 +788,9 @@ int main()
                     rez_determinant=matrice_det.detMat();
                     cout<<"Determinantul matricei introduse este ";
                     cout<<rez_determinant<<endl;
+            
+                    
+                    matrice_det.~c_Matrice();
                     break;
                     
                 }
@@ -769,6 +812,10 @@ int main()
                     
                     cout<<"Matricea inversa este "<<endl;
                     inversa.print();
+                    
+                
+                    matrice.~c_Matrice();
+                    inversa.~c_Matrice();
                     
             break;
             
@@ -801,38 +848,52 @@ int main()
                 //c_Matrice **matrice_vect=new c_Matrice[nr];
                 c_Matrice matrice_vect[nr];
                 c_Matrice matr_rez;
-                int i;
+                int i,linii,coloane;
                 for(i=0;i<nr;i++)
                 {
+                    
                     //cout<<"Dati nr de linii pentru matricea "<<i+1;
-                    f>>matrice_vect[i].lin;
+                    f>>linii;
                     //cout<<"Dati nr de coloane pentru matricea "<<i+1;
-                    f>>matrice_vect[i].col;
+                    f>>coloane;
+                    
+                    matrice_vect[i].init(linii,coloane);
                     
                     if(i!=0)
                     {
-                        if(matrice_vect[i].lin!= matrice_vect[0].lin || matrice_vect[i].col!= matrice_vect[0].col)
+                        if(matrice_vect[i].getLin() != matrice_vect[0].getLin() || matrice_vect[i].getCol() != matrice_vect[0].getCol() )
                         {
                             adun<<"Matricea introdusa nu se poate aduna (diefra numarul de linii/coloane)";
                             break;
                         }
                     }
                     
-                    f>>matrice_vect[i];
+                    f>>(matrice_vect[i]);
                     
                     if(i==0)
                     {
+                        matr_rez.init(linii,coloane);
+                        //cout<<"Mat "<<i<<" init:\n";
+                        matrice_vect[i].print();
                         matr_rez=matrice_vect[i];
+                        //cout<<"Mat rez init:\n";
+                        matr_rez.print();
                     }
                     else
-                        matr_rez=matr_rez+matrice_vect[i];
+                        matr_rez=(matrice_vect[i])+matr_rez;
                     
                 }
                 adun<<"Matricea rezultata in urma adunarilor este "<<endl;
                 adun<<matr_rez;
+                
+                for(i=0;i<nr;i++)
+                    matrice_vect[i].~c_Matrice();
+                
+                matr_rez.~c_Matrice();
                 break;
                 
             }
+                
                 
             case 'b': {
                 //cout<<"Dati numarul de matrice pe care doriti sa le scadeti ";
@@ -841,19 +902,21 @@ int main()
                 //c_Matrice **matrice_vect=new c_Matrice[nr];
                 c_Matrice matrice_vect[nr];
                 c_Matrice matr_rez;
-                int i;
+                int i,linii,coloane;
                 for(i=0;i<nr;i++)
                 {
                     //cout<<"Dati nr de linii pentru matricea "<<i+1;
-                    f>>matrice_vect[i].lin;
+                    f>>linii;
                     //cout<<"Dati nr de coloane pentru matricea "<<i+1;
-                    f>>matrice_vect[i].col;
+                    f>>coloane;
+                    
+                    matrice_vect[i].init(linii,coloane);
                     
                     if(i!=0)
                     {
-                        if(matrice_vect[i].lin!= matrice_vect[0].lin || matrice_vect[i].col!= matrice_vect[0].col)
+                        if(matrice_vect[i].getLin() != matrice_vect[0].getLin() || matrice_vect[i].getCol() != matrice_vect[0].getCol() )
                         {
-                            scad<<"Matricea introdusa nu se poate scade (diefra numarul de linii/coloane)";
+                            scad<<"Matricea introdusa nu se poate scade (difera numarul de linii/coloane)";
                             break;
                         }
                     }
@@ -862,14 +925,20 @@ int main()
                     
                     if(i==0)
                     {
+                        matr_rez.init(linii,coloane);
                         matr_rez=matrice_vect[i];
                     }
                     else
-                        matr_rez=matr_rez+matrice_vect[i];
+                        matr_rez=matr_rez-matrice_vect[i];
                     
                 }
                 scad<<"Matricea rezultata in urma scaderilor este "<<endl;
                 scad<<matr_rez;
+                
+                for(i=0;i<nr;i++)
+                    matrice_vect[i].~c_Matrice();
+                
+                matr_rez.~c_Matrice();
                 break;
                 
             }
@@ -880,19 +949,21 @@ int main()
                 //c_Matrice **matrice_vect=new c_Matrice[nr];
                 c_Matrice matrice_vect[nr];
                 c_Matrice matr_rez;
-                int i;
+                int i,linii,coloane;
                 for(i=0;i<nr;i++)
                 {
                     //cout<<"Dati nr de linii pentru matricea "<<i+1;
-                    f>>matrice_vect[i].lin;
+                    f>>linii;
                     //cout<<"Dati nr de coloane pentru matricea "<<i+1;
-                    f>>matrice_vect[i].col;
+                    f>>coloane;
+                    
+                    matrice_vect[i].init(linii,coloane);
                     
                     if(i!=0)
                     {
-                        if( matrice_vect[i].lin!= matrice_vect[0].col )
+                        if( matrice_vect[i].getLin() != matrice_vect[0].getCol() )
                         {
-                            inm<<"Matricea introdusa nu se poate inmulti (diefra numarul de linii/coloane)";
+                            cout<<"Matricea introdusa nu se poate inmulti (diefra numarul de linii/coloane)";
                             break;
                         }
                     }
@@ -900,6 +971,7 @@ int main()
                     
                     if(i==0)
                     {
+                        matr_rez.init(linii,coloane);
                         matr_rez=matrice_vect[i];
                     }
                     else
@@ -907,35 +979,49 @@ int main()
                 }
                 inm<<"Matricea rezultata in urma inmultirilor este "<<endl;
                 inm<<matr_rez;
+                
+                for(i=0;i<nr;i++)
+                    matrice_vect[i].~c_Matrice();
+                
+                matr_rez.~c_Matrice();
                 break;
                 
             }
                 
-            case 'd': {
-                c_Matrice matrice_det;
-                c_numar_complex rez_determinant;
                 
-                //cout<<"Dati nr de linii ";
-                f>>matrice_det.lin;
+            case 'd': {
+                
+                int linii,coloane;
+               // cout<<"Dati nr de linii ";
+                f>>linii;
                 //cout<<"Dati nr de coloane ";
-                f>>matrice_det.col;
+                f>>coloane;
+                
+                c_Matrice matrice_det(linii,coloane);
+                c_numar_complex rez_determinant(0,0);
+                
                 
                 f>>matrice_det;
                 
                 rez_determinant=matrice_det.detMat();
-                determ<<"Determinantul matricei introduse este "<<endl;
-                determ<<rez_determinant;
+               determ<<"Determinantul matricei introduse este ";
+               determ<<rez_determinant<<endl;
+                
+                matrice_det.~c_Matrice();
                 break;
                 
             }
             case 'e': {
-                c_Matrice matrice;
-                c_Matrice inversa;
+                
+                int linii,coloane;
                 
                 //cout<<"Dati nr de linii ";
-                f>>matrice.lin;
+                f>>linii;
                 //cout<<"Dati nr de coloane ";
-                f>>matrice.col;
+                f>>coloane;
+                
+                c_Matrice matrice(linii,coloane);
+                c_Matrice inversa(linii,coloane);
                 
                 f>>matrice;
                 
@@ -943,6 +1029,9 @@ int main()
                 
                 inv<<"Matricea inversa este "<<endl;
                 inv<<inversa;
+                
+                matrice.~c_Matrice();
+                inversa.~c_Matrice();
                 
                 break;
                 
@@ -1026,4 +1115,45 @@ int main()
  inversa unei matrici patratice cu determinantul nenul, care sa foloseasca funcile descrise anterior;
  aruncarea unei exceptii daca se apeleaza functia inversa, dar inversa matricii nu exista.
 o Clasa matrice trebuie implementata folosind alocare dinamica
+ 
+ RULARE :
+ 
+ Doriti sa cititi datele din fisier(1) sau de la tastaura(2)? 2
+ a) Adunare
+ b) Scadere
+ c) Inmultire
+ d) Determinant
+ e) Inversa
+ x) Terminare.
+ d
+ Dati nr de linii 3
+ Dati nr de coloane 3
+ Citesc matricea cu 3 de linii si 3 de coloane
+ Dati elementul complex mat[1][1] 1
+ 1
+ Dati elementul complex mat[1][2] 2
+ 2
+ Dati elementul complex mat[1][3] 2
+ 3
+ Dati elementul complex mat[2][1] 5
+ 6
+ Dati elementul complex mat[2][2] -1
+ -1
+ Dati elementul complex mat[2][3] 0
+ 0
+ Dati elementul complex mat[3][1] -25
+ 3
+ Dati elementul complex mat[3][2] 3
+ -25
+ Dati elementul complex mat[3][3] 6
+ 7
+ Determinantul matricei introduse este (841+23i)
+ a) Adunare
+ b) Scadere
+ c) Inmultire
+ d) Determinant
+ e) Inversa
+ x) Terminare.
+ x
+ Program ended with exit code: 0
  */
